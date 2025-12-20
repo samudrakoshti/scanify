@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Web App</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body class="light">
+
+<div id="permissionScreen" class="screen">
+  <h2>Permissions Required</h2>
+  <p>This app needs Camera & Storage access to scan and save QR codes.</p>
+  <button onclick="acceptPermissions()">Continue</button>
+</div>
+
+<div id="loginScreen" class="screen hidden">
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
+
+<div id="homeScreen" class="screen hidden">
+  <h2>QR App</h2>
+  <button onclick="openScanner()">Scan QR</button>
+  <button onclick="openGenerator()">Generate QR</button>
+  <button onclick="openSaved()">Saved Data</button>
+  <button onclick="openSettings()">Settings</button>
+</div>
+
+<div id="scannerScreen" class="screen hidden">
+  <div id="reader"></div>
+  <button onclick="goHome()">Back</button>
+</div>
+
+<div id="generatorScreen" class="screen hidden">
+  <input type="text" id="qrText" placeholder="Enter text or URL">
+  <button onclick="generateQR()">Generate</button>
+  <div id="qrResult"></div>
+  <button onclick="goHome()">Back</button>
+</div>
+
+<div id="savedScreen" class="screen hidden">
+  <h3>Saved Scans</h3>
+  <ul id="savedList"></ul>
+  <button onclick="clearSaved()">Clear All</button>
+  <button onclick="goHome()">Back</button>
+</div>
+
+<div id="settingsScreen" class="screen hidden">
+  <h3>Settings</h3>
+  <button onclick="setTheme('light')">Light Mode</button>
+  <button onclick="setTheme('dark')">Dark Mode</button>
+  <button onclick="setTheme('eye')">Eye Protection</button>
+  <button onclick="logout()">Logout</button>
+  <button onclick="goHome()">Back</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
